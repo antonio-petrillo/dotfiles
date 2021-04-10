@@ -1,0 +1,24 @@
+#+TITLE: My Dotfiles
+#+AUTHOR: Antonio Petrillo
+
+* What this repo contains
++ HerbstluftWM with (derived from standard arcolinux-hlwm config):
+  + picom
+  + nmtray
+  + polybar
+  + literal config
++ Emacs with
+  + evil and other stuff
+  + logo folder for the dashboard
+  + literal config
++ Vim
++ tmux (I use it when I can't use HLWM, i.e. on my laptop with ElementaryOS)
++ wallpaper collection
++ Alacritty
+    
+* What I want to add, or redo in a better way
++ An Xmonad config, possibly literal
++ A better Vim config
++ Extend my Emacs config
++ A folder with all my scripts
++ A NixOS config if I take the courage to change
