@@ -21,4 +21,4 @@
 + A better Vim config
 + Extend my Emacs config
 + A folder with all my scripts
-+ A NixOS config if I take the courage to change
++ A NixOS config if I take the courage to switch
