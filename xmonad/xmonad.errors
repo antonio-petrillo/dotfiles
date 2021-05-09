@@ -1,0 +1,22 @@
+
+xmonad.hs:79:17: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+   |
+79 | myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
+   |                 ^^^^^^^
+
+xmonad.hs:85:13: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+   |
+85 | fibonacci = spacing myGaps $ smartBorders $ spiral (6/7)
+   |             ^^^^^^^
+
+xmonad.hs:101:12: warning: [-Wdeprecations]
+    In the use of ‘defaultConfig’
+    (imported from XMonad, but defined in XMonad.Config):
+    Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
+    |
+101 | myConfig = defaultConfig {
+    |            ^^^^^^^^^^^^^
