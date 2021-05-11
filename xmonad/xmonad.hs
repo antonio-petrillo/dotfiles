@@ -1,4 +1,5 @@
 import XMonad
+import System.IO
 import System.Exit
 
 import qualified XMonad.StackSet as W
@@ -8,6 +9,9 @@ import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
 
 import XMonad.Hooks.ManageDocks (avoidStruts)
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.EwmhDesktops
 
 import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed 
@@ -15,11 +19,15 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spiral
 
-myTerminal      = "termite"
-myLauncher      = "dmenu_run"
-myFileManager   = "pcmanfm"
-myBrowser       = "vivaldi-stable"
-myEditor        = "emacs"
+import Data.Maybe (isJust, fromJust)
+
+myTerminal         = "alacritty"
+myFallbackTerminal = "cool-retro-term"
+fallbackTerminal   = "konsole"
+myLauncher         = "dmenu_run"
+myFileManager      = "pcmanfm"
+myBrowser          = "google-chrome-stable"
+myEditor           = "emacs"
 
 myBorderWidth   = 2
 myGaps          = 2
@@ -29,7 +37,8 @@ myFocusFollowsMouse = True
 
 myModMask       = mod4Mask
 
-myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+myWorkspaces    = map show [1..9]
+myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..]
 
 myNormalBorderColor  = "#6633f6"
 myFocusedBorderColor = "#cc0dff"
@@ -37,7 +46,8 @@ myFocusedBorderColor = "#cc0dff"
 myFont = "ttf: Fira Code,Fira Code Retina:style=Retina,Regular"
 
 myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
-    [ ((modKey , xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modKey,                 xK_Return), spawn $ XMonad.terminal conf)
+    , ((modKey .|. controlMask, xK_t     ), spawn $ myFallbackTerminal)
     , ((modKey,                 xK_d     ), spawn myLauncher)
     , ((modKey,                 xK_w     ), spawn myBrowser)
     , ((modKey,                 xK_e     ), spawn myEditor)
@@ -61,7 +71,7 @@ myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
     -- toggle the status bar gap (used with avoidStruts from Hooks.ManageDocks)
     -- , ((modKey , xK_b ), sendMessage ToggleStruts)
     , ((modKey .|. shiftMask,   xK_x     ), io (exitWith ExitSuccess))
-    , ((modKey,                 xK_x     ), restart "xmonad" True)
+    , ((modKey,                 xK_x     ), spawn $ "xmonad --recompile && xmonad --restart")
     ]
     ++
     [((m .|. modKey, k), windows $ f i)
@@ -92,11 +102,11 @@ myManageHook = composeAll
 myLogHook = return ()
 
 myStartupHook = do
-    spawnOnce "picom &"
-    spawnOnce "feh --bg-scale ~/Pictures/wallpaper/haskell.png &"
+    spawnOnce "picom --experimental-backend &"
+    spawnOnce "feh --bg-scale ~/Pictures/wallpaper/haskell.jpg &"
     spawnOnce "lxsession &"
-    spawnOnce "udiskie &" 
-    spawnOnce "xmobar &"
+    spawnOnce "udiskie &"
+    spawnOnce "xmobar ~/.xmonad/xmobarrc"
 
 myConfig = defaultConfig {
         terminal           = myTerminal,
@@ -111,11 +121,31 @@ myConfig = defaultConfig {
         mouseBindings      = myMouseBindings,
 
         layoutHook         = myLayout,
-        manageHook         = myManageHook,
+        manageHook         = myManageHook <+> manageDocks,
         logHook            = myLogHook,
         startupHook        = myStartupHook
     }
 
+clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
+    where i = fromJust $ M.lookup ws myWorkspaceIndices
+
+windowCount :: X (Maybe String)
+windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
+
 main = do
-  xmproc <- spawnPipe "xmobar  $HOME/.xmobarrc"
-  xmonad myConfig
+  xmproc <- spawnPipe "xmobar  ~/.xmonad/xmobarrc"
+  xmonad $ ewmh myConfig
+    { handleEventHook = docksEventHook
+    , logHook         = dynamicLogWithPP $ xmobarPP
+                           { ppOutput          = \x -> hPutStrLn xmproc x
+                           , ppCurrent         = xmobarColor "#992299" "" . wrap "[" "]"
+                           , ppVisible         = xmobarColor "#992299" "" . clickable
+                           , ppHidden          = xmobarColor "#905aed" "" . wrap "*" "" . clickable
+                           , ppHiddenNoWindows = xmobarColor "#662266" "" . clickable
+                           , ppTitle           = xmobarColor "#CCCCCC" "" . shorten 60
+                           , ppSep             = "<fc=#666666> <fn=2>|</fn> </fc>"
+                           , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!" 
+                           , ppExtras          = [windowCount]
+                           , ppOrder           = \(ws:l:t:ex) -> [ws,l] ++ ex ++ [t]
+                           }
+    }
