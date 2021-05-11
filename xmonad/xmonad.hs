@@ -7,6 +7,7 @@ import qualified Data.Map        as M
 
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
+import XMonad.Util.EZConfig
 
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.DynamicLog
@@ -27,7 +28,9 @@ fallbackTerminal   = "konsole"
 myLauncher         = "dmenu_run"
 myFileManager      = "pcmanfm"
 myBrowser          = "google-chrome-stable"
-myEditor           = "emacs"
+myEditor           = "emacs" -- maybe someday I can change it to vim, but I don't think so
+emacs              = "emacs"
+emacsExec          = emacs ++ " --eval "
 
 myBorderWidth   = 2
 myGaps          = 2
@@ -77,6 +80,11 @@ myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
     [((m .|. modKey, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+
+myAdditionalKeys = [ ("C-e j", spawn (emacsExec ++ "'(dired nil)'" ))
+                   , ("C-e t", spawn (emacsExec ++ "'(eshell)'"))
+                   , ("C-e d", spawn (emacsExec ++ "'(dashboard-refresh-buffer)'"))
+                   ]
 
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w))
@@ -148,4 +156,4 @@ main = do
                            , ppExtras          = [windowCount]
                            , ppOrder           = \(ws:l:t:ex) -> [ws,l] ++ ex ++ [t]
                            }
-    }
+    } `additionalKeysP` myAdditionalKeys
