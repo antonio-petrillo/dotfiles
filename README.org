@@ -7,6 +7,9 @@
   + nmtray
   + polybar
   + literal config
++ Xmonad config with
+  + literate config
+  + xmobar
 + Emacs with
   + evil and other stuff
   + logo folder for the dashboard
