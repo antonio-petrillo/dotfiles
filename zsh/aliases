@@ -1,0 +1,9 @@
+alias ls="exa"
+alias ll="exa -lah --icons"
+
+alias cat="bat"
+
+alias vim="nvim"
+alias vi="nvim"
+
+alias emacs="emacs -nw"

@@ -19,11 +19,14 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
 
+import XMonad.Actions.MouseResize
+
 import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed 
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spiral
+import XMonad.Layout.ToggleLayouts
 
 import Data.Maybe (isJust, fromJust)
 #+end_src
@@ -59,63 +62,69 @@ myFont = "ttf: Fira Code,Fira Code Retina:style=Retina,Regular"
 #+end_src
 * My keybinding
 #+begin_src haskell :tangle xmonad.hs
-  myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
-      [((m .|. modKey, k), windows $ f i)
-          | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-          , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
+    [((m .|. modKey, k), windows $ f i)
+        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
 
-  myAdditionalKeys = [ -- Basic keybindings
-                       ("M-<Return>"  , spawn $ myTerminal) 
-                     , ("M1-C-t"      , spawn $ myFallbackTerminal)
-                     , ("M-d"         , spawn myLauncher)
-                     , ("M-w"         , spawn myBrowser)
-                     , ("M-e"         , spawn myEditor)
-                     , ("M-S-<Return>", spawn myFileManager)
-                     , ("M-S-q"       , kill)
-                     , ("M-<Space>"   , sendMessage NextLayout)
-                     , ("M-n"         , refresh)
-                     , ("M-<Tab>"     , windows W.focusDown)
-                     , ("M-S-<Tab>"   , windows W.focusUp)
-                     , ("M-j"         , windows W.focusDown)
-                     , ("M-k"         , windows W.focusUp)
-                     , ("M-m"         , windows W.focusMaster)
-                     , ("M-C-<Return>", windows W.swapMaster)
-                     , ("M-S-j"       , windows W.swapDown)
-                     , ("M-S-k"       , windows W.swapUp)
-                     , ("M-h"         , sendMessage Shrink)
-                     , ("M-l"         , sendMessage Expand)
-                     , ("M-t"         , withFocused $ windows . W.sink)
-                     , ("M-,"         , sendMessage (IncMasterN 1))
-                     , ("M-."         , sendMessage (IncMasterN (-1)))
-                     , ("M-S-x"       , io (exitWith ExitSuccess))
-                     , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
-                     , ("M-<Esc>"     , spawn $ "xkill")
+myAdditionalKeys = [ -- Basic keybindings
+                     ("M-<Return>"  , spawn $ myTerminal) 
+                   , ("M1-C-t"      , spawn $ myFallbackTerminal)
+                   , ("M-d"         , spawn myLauncher)
+                   , ("M-w"         , spawn myBrowser)
+                   , ("M-e"         , spawn myEditor)
+                   , ("M-S-<Return>", spawn myFileManager)
+                   , ("M-S-q"       , kill)
+                   , ("M-<Space>"   , sendMessage NextLayout)
+                   , ("M-n"         , refresh)
+                   , ("M-<Tab>"     , windows W.focusDown)
+                   , ("M-S-<Tab>"   , windows W.focusUp)
+                   , ("M-j"         , windows W.focusDown)
+                   , ("M-k"         , windows W.focusUp)
+                   , ("M-m"         , windows W.focusMaster)
+                   , ("M-C-<Return>", windows W.swapMaster)
+                   , ("M-S-j"       , windows W.swapDown)
+                   , ("M-S-k"       , windows W.swapUp)
+                   , ("M-h"         , sendMessage Shrink)
+                   , ("M-l"         , sendMessage Expand)
+                   , ("M-t"         , withFocused $ windows . W.sink)
+                   , ("M-,"         , sendMessage (IncMasterN 1))
+                   , ("M-."         , sendMessage (IncMasterN (-1)))
+                   -- , ("M-f"         , sendMessage $ Toggle FULL)
+                   , ("M-S-x"       , io (exitWith ExitSuccess))
+                   , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
+                   , ("M-<Esc>"     , spawn $ "xkill")
 
-                     -- Emacs integration
-                     , ("C-e C-j"     , spawn (emacsExec ++ "'(dired nil)'" ))
-                     , ("C-e C-x"     , spawn (emacsExec ++ "'(dired \"~/.xmonad\")'"))  -- open xmonad folder
-                     , ("C-e C-e"     , spawn (emacsExec ++ "'(dired \"~/.emacs.d\")'")) -- open emacs folder
-                     , ("C-e C-c"     , spawn (emacsExec ++ "'(dired \"~/.config\")'"))  -- open config folder
-                     , ("C-e e"       , spawn (emacsExec ++ "'(eshell)'"))
-                     , ("C-e t"       , spawn (emacsExec ++ "'(vterm)'"))
-                     , ("C-e d"       , spawn (emacsExec ++ "'(dashboard-refresh-buffer)'"))
+                   -- Emacs integration
+                   , ("C-e C-j"     , spawn (emacsExec ++ "'(dired nil)'" ))
+                   , ("C-e C-x"     , spawn (emacsExec ++ "'(dired \"~/.xmonad\")'"))  -- open xmonad folder
+                   , ("C-e C-e"     , spawn (emacsExec ++ "'(dired \"~/.emacs.d\")'")) -- open emacs folder
+                   , ("C-e C-c"     , spawn (emacsExec ++ "'(dired \"~/.config\")'"))  -- open config folder
+                   , ("C-e e"       , spawn (emacsExec ++ "'(eshell)'"))
+                   , ("C-e t"       , spawn (emacsExec ++ "'(vterm)'"))
+                   , ("C-e d"       , spawn (emacsExec ++ "'(dashboard-refresh-buffer)'"))
 
-                     -- Terminal app
-                     , ("M-a h"       , spawn (myTerminal ++ " -e htop"))
-                     , ("M-a f"       , spawn (myTerminal ++ " -e ranger"))
-                     , ("M-a u"       , spawn (myTerminal ++ " -e sudo pacman -Syyu"))
-                     , ("M-a e"       , spawn (myTerminal ++ " -e nvim"))
-                     ]
+                   -- Terminal app
+                   , ("M-a h"       , spawn (myTerminal ++ " -e htop"))
+                   , ("M-a f"       , spawn (myTerminal ++ " -e ranger"))
+                   , ("M-a u"       , spawn (myTerminal ++ " -e sudo pacman -Syyu"))
+                   , ("M-a e"       , spawn (myTerminal ++ " -e nvim"))
+                   ]
 
-  myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
-      [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w))
-      , ((modMask, button2), (\w -> focus w >> windows W.swapMaster))
-      , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
-      ]
+myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
+    [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w))
+    , ((modMask, button2), (\w -> focus w >> windows W.swapMaster))
+    , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
+    ]
 #+end_src
 * My Layout
 #+begin_src haskell :tangle xmonad.hs
-myLayout = avoidStruts $ myTiledLayout ||| Mirror myTiledLayout ||| fibonacci ||| (noBorders Full) 
+myLayout = avoidStruts $ mouseResize  myDefaultLayout
+  where
+    myDefaultLayout = myTiledLayout
+                      ||| Mirror myTiledLayout
+                      ||| fibonacci
+                      ||| noBorders Full 
 
 myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
   where
@@ -140,6 +149,8 @@ myStartupHook = do
     spawnOnce "lxsession &"
     spawnOnce "udiskie &"
     spawnOnce "xmobar ~/.xmonad/xmobarrc"
+    spawnOnce "xsetroot -cursor_name left_ptr &"
+    spawnOnce "xsetroot -solid '#664466'"
 #+end_src
 * My config
 #+begin_src haskell :tangle xmonad.hs

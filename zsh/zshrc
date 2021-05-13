@@ -1,0 +1,19 @@
+source $ZDOTDIR/aliases
+
+autoload -U colors && colors
+
+PROMPT="%F{207}%n%f%F{blue}@%f%F{magenta}%m%f%F{cyan}%~%f%b "
+RPROMPT="%F{blue}%t%f"
+
+setopt autocd
+stty stop undef
+
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char

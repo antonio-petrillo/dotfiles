@@ -14,11 +14,14 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
 
+import XMonad.Actions.MouseResize
+
 import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed 
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spiral
+import XMonad.Layout.ToggleLayouts
 
 import Data.Maybe (isJust, fromJust)
 
@@ -76,6 +79,7 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-t"         , withFocused $ windows . W.sink)
                    , ("M-,"         , sendMessage (IncMasterN 1))
                    , ("M-."         , sendMessage (IncMasterN (-1)))
+                   -- , ("M-f"         , sendMessage $ Toggle FULL)
                    , ("M-S-x"       , io (exitWith ExitSuccess))
                    , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
                    , ("M-<Esc>"     , spawn $ "xkill")
@@ -102,7 +106,12 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
     ]
 
-myLayout = avoidStruts $ myTiledLayout ||| Mirror myTiledLayout ||| fibonacci ||| (noBorders Full) 
+myLayout = avoidStruts $ mouseResize  myDefaultLayout
+  where
+    myDefaultLayout = myTiledLayout
+                      ||| Mirror myTiledLayout
+                      ||| fibonacci
+                      ||| noBorders Full 
 
 myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
   where
@@ -125,6 +134,8 @@ myStartupHook = do
     spawnOnce "lxsession &"
     spawnOnce "udiskie &"
     spawnOnce "xmobar ~/.xmonad/xmobarrc"
+    spawnOnce "xsetroot -cursor_name left_ptr &"
+    spawnOnce "xsetroot -solid '#664466'"
 
 myConfig = defaultConfig {
         terminal           = myTerminal,
