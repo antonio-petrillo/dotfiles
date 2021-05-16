@@ -2,14 +2,34 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("neovim config"
+(("xmonad config"
+ (filename . "~/.xmonad/")
+ (front-context-string . "xpm\n  -rw-r--r--")
+ (rear-context-string . "28 14 mag 10.53 ")
+ (position . 178))
+("awesome config"
+ (filename . "~/.config/awesome/")
+ (front-context-string . "awesome.org\n  -r")
+ (rear-context-string . "3K 14 mag 13.12 ")
+ (position . 185))
+("haskell course"
+ (filename . "~/uni/code/programming_in_haskell/")
+ (front-context-string . "cap1\n  drwxr-xr-")
+ (rear-context-string . "16 19 apr 15.01 ")
+ (position . 197))
+("neovim config"
  (filename . "~/.config/nvim/")
  (front-context-string)
- (rear-context-string . "09 Apr 11 00:05 ")
- (position . 183))
+ (rear-context-string . "09 19 apr 12.38 ")
+ (position . 178))
+("config folder"
+ (filename . "~/.config/")
+ (front-context-string . "arcolinux-tweak-")
+ (rear-context-string . "24 19 apr 10.44 ")
+ (position . 218))
 ("emacs config"
  (filename . "~/.emacs.d/")
- (front-context-string)
- (rear-context-string . "1 15:02 recentf\n")
- (position . 527))
+ (front-context-string . "auto-save-list\n ")
+ (rear-context-string . "34 16 mag 16.33 ")
+ (position . 178))
 )

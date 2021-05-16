@@ -1,8 +1,8 @@
 (require 'package)
 (setq package-archives '(("melpa"        . "https://melpa.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
-                           ("elpa"         . "https://elpa.gnu.org/packages/")
-                           ("org"          . "https://orgmode.org/elpa")))
+                         ("elpa"         . "https://elpa.gnu.org/packages/")
+                         ("org"          . "https://orgmode.org/elpa")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -13,46 +13,55 @@
 ;; ensure all the package included with use-package
 (setq use-package-always-ensure t)
 
-;; hide scroll bar, menu bar, tool bar
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
+  ;; hide scroll bar, menu bar, tool bar
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
 
-;; remove initial buffer
-(setq inhibit-startup-message t)
+  ;; remove initial buffer
+  (setq inhibit-startup-message t)
 
-;; enable line numbers
-(column-number-mode t)
-(global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'relative)
+  ;; enable line numbers
+  (column-number-mode t)
+  (global-display-line-numbers-mode t)
+  (setq display-line-numbers-type 'relative)
 
-;; don't use line numbers in certain mode
-(dolist (mode '(org-mode-hook
-                term-mode-hook
-                vterm-mode-hook
-		    treemacs-mode-hook
-                shell-mode-hook
-                eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  ;; don't use line numbers in certain mode
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+		      vterm-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-;; don't create lockfile, I know what file I'm gonna edit
-(setq create-lockfiles nil)
+  ;; don't create lockfile, I know what file I'm gonna edit
+  (setq create-lockfiles nil)
 
-;; don't make backup files
-;; (setq make-backup-files nil)
+  ;; don't make backup files
+  ;; (setq make-backup-files nil)
 
-;; change bakcup directory
-(setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
+  ;; change bakcup directory
+  (setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
 
-;; username and email
-(setq user-full-name "Antonio Petrillo"
-      user-mail-address "antonio.petrillo4@studenti.unina.it")
+  ;; username and email
+  (setq user-full-name "Antonio Petrillo"
+        user-mail-address "antonio.petrillo4@studenti.unina.it")
 
-;; type yes or no require to much effort
-(fset 'yes-or-no-p 'y-or-n-p)
+  ;; type yes or no require to much effort
+  (fset 'yes-or-no-p 'y-or-n-p)
 
-;; use fira code fonts
-(set-face-attribute 'default nil :font "Fira Code Retina" :height 180)
+  ;; use fira code fonts
+  (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
+
+  ;; scroll one line at a time (less "jumpy" than defaults)
+    
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+    
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+    
+  (setq scroll-step 1) ;; keyboard scroll one line at a time
 
 (use-package evil
   :init
@@ -105,70 +114,72 @@
   :custom (doom-modeline-height 15))
   
 (use-package doom-themes
-  :init (load-theme 'doom-one t))
+  :init (load-theme 'doom-gruvbox t))
 
-(use-package page-break-lines
-  :ensure t
-  :diminish (page-break-lines-mode))
+(global-set-key (kbd "C-c t") 'counsel-load-theme)
 
-(use-package dashboard
-  :init
-  (progn
-    (setq dashboard-items '((recents   . 5)
-                            (bookmarks . 5)))
-    (setq dashboard-show-shortcuts nil)
-    (setq dashboard-center-content nil)
-    (setq dashboard-banner-logo-title "EMACS")
-    (setq dashboard-set-files-icons t)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-startup-banner "~/.emacs.d/logo/emacs_e.png")
-    (setq dashboard-set-navigator t))
-  :config
-  (dashboard-setup-startup-hook))
+  (use-package page-break-lines
+    :ensure t
+    :diminish (page-break-lines-mode))
 
-(use-package dired
-  :ensure nil
-  :commands (dired dired-jump)
-  :bind (("C-x C-j" . dired-jump))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer))
+  (use-package dashboard
+    :init
+    (progn
+      (setq dashboard-items '((recents   . 5)
+                              (bookmarks . 5)))
+      (setq dashboard-show-shortcuts nil)
+      (setq dashboard-center-content nil)
+      (setq dashboard-banner-logo-title "EMACS")
+      (setq dashboard-set-files-icons t)
+      (setq dashboard-set-heading-icons t)
+      (setq dashboard-startup-banner "~/.emacs.d/logo/emacs-e.svg")
+      (setq dashboard-set-navigator t))
+    :config
+    (dashboard-setup-startup-hook))
 
-(use-package dired-single)
+  (use-package dired
+    :ensure nil
+    :commands (dired dired-jump)
+    :bind (("C-x C-j" . dired-jump))
+    :custom ((dired-listing-switches "-agho --group-directories-first"))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-single-up-directory
+      "l" 'dired-single-buffer))
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
+  (use-package dired-single)
 
-(use-package dired-open
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  (setq dired-open-extensions '(("png" . "feh")
-				    ("pdf" . "zathura")
-                                ("jpg" . "feh")
-                                ("mkv" . "mpv"))))
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
 
-(use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "H" 'dired-hide-dotfiles-mode))
+  (use-package dired-open
+    :config
+    ;; Doesn't work as expected!
+    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+    (setq dired-open-extensions '(("png" . "feh")
+				      ("pdf" . "zathura")
+                                  ("jpg" . "feh")
+                                  ("mkv" . "mpv"))))
+
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
 
 (use-package which-key
   :init (which-key-mode 1)
   :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 0.3))
+  (setq which-key-idle-delay 0.2))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package rainbow-mode
-  :config
-  (add-hook 'prog-mode-hook #'rainbow-mode)
-)
+  (use-package rainbow-mode
+    :config
+    (add-hook 'prog-mode-hook #'rainbow-mode)
+  )
 
 (use-package beacon
   :config
@@ -193,113 +204,108 @@
   ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
 
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
+
+     (global-set-key (kbd "C-x e") 'mu4e)
+
+     (setq mu4e-user-mail-address-list '("antofma97@gmail.com"))	
+
+     ;; viewing options
+     (setq mu4e-view-show-addresses t)
+     ;; Do not leave message open after it has been sent
+     (setq message-kill-buffer-on-exit t)
+     ;; Don't ask for a 'context' upon opening mu4e
+     (setq mu4e-context-policy 'pick-first)
+     ;; Don't ask to quit
+     (setq mu4e-confirm-quit nil)
+
+     (setq mu4e-maildir-shortcuts
+      '(("GmailAccounts/INBOX" . ?g)))
+
+     ;; attachments will be automaically placed on the specified folder
+     (setq mu4e-attachment-dir "~/Downloads/MailAttachments")
+     ;; modify behavior when putting something in the trash (T flag) so as
+
+     ;; to make it sync to the remote server. This code deals with the bug
+     ;; that, whenever a message is marked with the trash label T,
+     ;; offlineimap wont sync it back to the gmail servers.
+     ;;
+     ;; NOTE: Taken from
+     ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+     (defun remove-nth-element (nth list)
+       (if (zerop nth) (cdr list)
+         (let ((last (nthcdr (1- nth) list)))
+           (setcdr last (cddr last))
+           list)))
+     (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
+     (add-to-list 'mu4e-marks
+             '(trash
+               :char ("d" . "▼")
+               :prompt "dtrash"
+               :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+               :action (lambda (docid msg target)
+                         (mu4e~proc-move docid
+                                         (mu4e~mark-check-target target) "-N"))))
+
+    ;; Context conf settings
 
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/uni/code")
-    (setq projectile-project-search-path '("~/uni/code")))
-  (setq projectile-switch-project-action #'projectile-dired))
+     (setq mu4e-contexts
+           `(
+        ,(make-mu4e-context
+          :name "Gmail Account"
+          :match-func (lambda (msg)
+                        (when msg
+                          (mu4e-message-contact-field-matches
+                           msg '(:from :to :cc :bcc) "antofma97@gmail.com")))
 
-(use-package counsel-projectile
-  :after projectile
-  :config (counsel-projectile-mode))
+          :vars '(
+                  (mu4e-trash-folder . "/GmailAccount/[Gmail].Trash")
+                  (mu4e-refile-folder . "/GmailAccount/[Gmail].Archive")
+                  (mu4e-drafts-folder . "/GmailAccount/[Gmail].Drafts")
+                  (mu4e-sent-folder . "/GmailAccount/[Gmail].Sent Mail")
+                  (user-mail-address  . "antofma97@gmail.com")
+                  (user-full-name . "Antonio Petrillo")
+                  (smtpmail-smtp-user . "antofma97")
+                  (smtpmail-local-domain . "gmail.com")
+                  (smtpmail-default-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-service . 587)
+                  ))
+        ))
 
-(use-package treemacs
-  :defer t
-  :init
-  (with-eval-after-load 'winum
-    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-  :config
-  (progn
-    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-          treemacs-deferred-git-apply-delay      0.5
-          treemacs-directory-name-transformer    #'identity
-          treemacs-display-in-side-window        t
-          treemacs-eldoc-display                 t
-          treemacs-file-event-delay              5000
-          treemacs-file-extension-regex          treemacs-last-period-regex-value
-          treemacs-file-follow-delay             0.2
-          treemacs-file-name-transformer         #'identity
-          treemacs-follow-after-init             t
-          treemacs-git-command-pipe              ""
-          treemacs-goto-tag-strategy             'refetch-index
-          treemacs-indentation                   2
-          treemacs-indentation-string            " "
-          treemacs-is-never-other-window         nil
-          treemacs-max-git-entries               5000
-          treemacs-missing-project-action        'ask
-          treemacs-move-forward-on-expand        nil
-          treemacs-no-png-images                 nil
-          treemacs-no-delete-other-windows       t
-          treemacs-project-follow-cleanup        nil
-          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-          treemacs-position                      'left
-          treemacs-read-string-input             'from-child-frame
-          treemacs-recenter-distance             0.1
-          treemacs-recenter-after-file-follow    nil
-          treemacs-recenter-after-tag-follow     nil
-          treemacs-recenter-after-project-jump   'always
-          treemacs-recenter-after-project-expand 'on-distance
-          treemacs-show-cursor                   nil
-          treemacs-show-hidden-files             t
-          treemacs-silent-filewatch              nil
-          treemacs-silent-refresh                nil
-          treemacs-sorting                       'alphabetic-asc
-          treemacs-space-between-root-nodes      t
-          treemacs-tag-follow-cleanup            t
-          treemacs-tag-follow-delay              1.5
-          treemacs-user-mode-line-format         nil
-          treemacs-user-header-line-format       nil
-          treemacs-width                         35
-          treemacs-workspace-switch-cleanup      nil)
+     ;; Set how email is to be sent
+     (setq send-mail-function (quote smtpmail-send-it))
 
-    ;; The default width and height of the icons is 22 pixels. If you are
-    ;; using a Hi-DPI display, uncomment this to double the icon size.
-    ;;(treemacs-resize-icons 44)
+;;       (require 'mu4e-alert)
 
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode 'always)
-    (pcase (cons (not (null (executable-find "git")))
-                 (not (null treemacs-python-executable)))
-      (`(t . t)
-       (treemacs-git-mode 'deferred))
-      (`(t . _)
-       (treemacs-git-mode 'simple))))
-  :bind
-  (:map global-map
-        ("M-0"       . treemacs-select-window)
-        ("C-x t 1"   . treemacs-delete-other-windows)
-        ("C-x t t"   . treemacs)
-        ("C-x t B"   . treemacs-bookmark)
-        ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+;;       (setq mu4e-alert-interesting-mail-query "flag:unread AND maildir:/GmailAccount/INBOX ")
+              
 
-(use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
+;;       (mu4e-alert-enable-mode-line-display)
 
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
+;;       (defun refresh-mu4e-alert-mode-line ()
+;;         (interactive)
+;;         (mu4e~proc-kill)
+;;         (async-shell-command "email_sync.sh")
+;;         (mu4e-alert-enable-mode-line-display)
+;;         )
+;;
+;;       (run-with-timer 0 3600 'refresh-mu4e-alert-mode-line)
+;;
+;;      ;; do not pop into view buffer window associated with async shell commands
+;;      (add-to-list 'display-buffer-alist
+;;              (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
 
-(use-package treemacs-icons-dired
-  :after (treemacs dired)
-  :ensure t
-  :config (treemacs-icons-dired-mode))
+   (use-package org
+     :config
+     (setq org-ellipsis " ▾"))
 
-(use-package org
-  :config
-  (setq org-ellipsis " ▾"))
+   (setq org-todo-keywords
+       '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
 
-(require 'org-tempo)
+   (require 'org-tempo)
 
 (use-package evil-org
   :after (evil org)
@@ -317,8 +323,7 @@
 
 (setq org-log-mode t)
 (setq org-agenda-files '("~/Documents/org/agenda/notes.org"
-                         "~/Documents/org/agenda/agenda.org"
-                         "~/Documents/org/agenda/uni.org"))
+			 "~/Documents/org/agenda/agenda.org"))
 
 (use-package org-bullets
   :config
@@ -332,6 +337,7 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (eshell     . t)
+   (lua        . t)
    (C          . t)
    (awk        . t)
    (sed        . t)
@@ -339,8 +345,9 @@
    (haskell    . t)
    (java       . t)
    (plantuml   . t)))
-   
-(setq org-confirm-babel-evaluate nil)
+
+(setq org-confirm-babel-evaluate nil
+      org-src-preserve-indentation t)
 
 (defun literate-config/tangle-config ()
   (when (string-equal (buffer-file-name)

@@ -3,33 +3,31 @@
 #+EMAIL: antonio.petrillo4@studenti.unina.it
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el
 #+TOC:
-
 * Setup package archives
 ** Current enabled package
 Enabling the repository to extends Emacs.
 
 #+BEGIN_SRC emacs-lisp 
-  (require 'package)
-  (setq package-archives '(("melpa"        . "https://melpa.org/packages/")
-                           ("melpa-stable" . "https://stable.melpa.org/packages/")
-                             ("elpa"         . "https://elpa.gnu.org/packages/")
-                             ("org"          . "https://orgmode.org/elpa")))
+(require 'package)
+(setq package-archives '(("melpa"        . "https://melpa.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("elpa"         . "https://elpa.gnu.org/packages/")
+                         ("org"          . "https://orgmode.org/elpa")))
 
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
-  (require 'use-package)
+(require 'use-package)
 
-  ;; ensure all the package included with use-package
-  (setq use-package-always-ensure t)
+;; ensure all the package included with use-package
+(setq use-package-always-ensure t)
 #+END_SRC
 ** Package manager to discover
 + Quelpa
 * Basic configuration
 ** UI & UX basic configuration
 More advanced UI configuration are in the *Theming* section.
-
 #+BEGIN_SRC emacs-lisp
   ;; hide scroll bar, menu bar, tool bar
   (scroll-bar-mode -1)
@@ -47,15 +45,12 @@ More advanced UI configuration are in the *Theming* section.
   ;; don't use line numbers in certain mode
   (dolist (mode '(org-mode-hook
                   term-mode-hook
-                  vterm-mode-hook
-		      treemacs-mode-hook
+		      vterm-mode-hook
                   shell-mode-hook
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+END_SRC
-
 ** System config
-
 #+BEGIN_SRC emacs-lisp
   ;; don't create lockfile, I know what file I'm gonna edit
   (setq create-lockfiles nil)
@@ -74,13 +69,21 @@ More advanced UI configuration are in the *Theming* section.
   (fset 'yes-or-no-p 'y-or-n-p)
 
   ;; use fira code fonts
-  (set-face-attribute 'default nil :font "Fira Code Retina" :height 180)
-#+END_SRC
+  (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
 
+  ;; scroll one line at a time (less "jumpy" than defaults)
+    
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+    
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+    
+  (setq scroll-step 1) ;; keyboard scroll one line at a time
+#+END_SRC
 * Let's go Evil
 I have tried the default emacs keybinding and they are not that bad, but by now I am too used to the vim keybinding
 Fun fact *EVIL* stand *Extensible VI Layer*.
-
 #+BEGIN_SRC emacs-lisp 
 (use-package evil
   :init
@@ -102,12 +105,10 @@ Fun fact *EVIL* stand *Extensible VI Layer*.
   :config
   (evil-collection-init))
 #+END_SRC
-
 * Integrating system clipboard
 Probably this isn't the cleanest way to do that but it's a good workaround.
 I can also use =p= & =y= in =NORMAL MODE=.
 This snippets can be used as a templete to create my personal function.
-
 #+BEGIN_SRC emacs-lisp
 ;; paste
 (defun paste-from-clipboard ()
@@ -129,26 +130,22 @@ This snippets can be used as a templete to create my personal function.
 ;; defining a keybinding
 (global-set-key (kbd "C-c C-y") 'copy-to-clipboard)
 #+END_SRC
-
 * Overriding some frustrating keybinding
 The =C-x C-z= minimize emacs and that is frustrating by itself,
 but when I use a system with tiling window manager it's even more frustrating,
 so I heve remapped to =undo= command.
 The other keybinding are useful when I don't use evil mode, in other words I don't need them.
-
 #+BEGIN_SRC emacs-lisp 
 (global-set-key (kbd "C-x C-z") 'undo)
 ;;(global-set-key (kbd "C-z") 'undo)
 ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
-
 * Theming
 ** Doom modeline and doom theme
 As I said in the *README.org* I have started my Emacs journey with 
 *Doom Emacs* and now I'm attached to their theme.
 I have also included *Doom Modeline* which is really elegant.
 Doom modeline require *all-the-icons-fonts* from *MELPA*, so remember to install before use modeline.
-
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons)
 
@@ -157,12 +154,13 @@ Doom modeline require *all-the-icons-fonts* from *MELPA*, so remember to install
   :custom (doom-modeline-height 15))
   
 (use-package doom-themes
-  :init (load-theme 'doom-one t))
-#+END_SRC
+  :init (load-theme 'doom-gruvbox t))
 
+(global-set-key (kbd "C-c t") 'counsel-load-theme)
+
+#+END_SRC
 ** Dashboard
 A fancy splash screen for Emacs.
-
 #+BEGIN_SRC emacs-lisp
   (use-package page-break-lines
     :ensure t
@@ -178,16 +176,15 @@ A fancy splash screen for Emacs.
       (setq dashboard-banner-logo-title "EMACS")
       (setq dashboard-set-files-icons t)
       (setq dashboard-set-heading-icons t)
-      (setq dashboard-startup-banner "~/.emacs.d/logo/emacs_e.png")
+      (setq dashboard-startup-banner "~/.emacs.d/logo/emacs-e.svg")
       (setq dashboard-set-navigator t))
     :config
     (dashboard-setup-startup-hook))
-#+END_SRC
 
+#+END_SRC
 ** Dired
 Dired stand for *Directory Editor*, a fully featured file manager inside Emacs!
 Here there are some tweak to enhance *Dired*.
-
 #+BEGIN_SRC emacs-lisp
   (use-package dired
     :ensure nil
@@ -219,31 +216,25 @@ Here there are some tweak to enhance *Dired*.
     (evil-collection-define-key 'normal 'dired-mode-map
       "H" 'dired-hide-dotfiles-mode))
 #+END_SRC
-
 * Other useful packages
 ** WhichKey
 This package make suggestions for the current chord, i.e. complete the current chord.
-
 #+BEGIN_SRC emacs-lisp 
 (use-package which-key
   :init (which-key-mode 1)
   :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 0.3))
+  (setq which-key-idle-delay 0.2))
 #+END_SRC
-
 ** RainbowDelimiters
 Highlight all kinds of parentheses at same nesting level.
 Essential to write elisp code.
-
 #+BEGIN_SRC emacs-lisp 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 #+END_SRC
-
 ** Rainbow mode
 If emacs recognize a color description then change the background with correnspondig color
-
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode
     :config
@@ -253,16 +244,13 @@ If emacs recognize a color description then change the background with correnspo
 ** Beacon
 Highlight the cursor  when I scroll the window.
 It's so cool that I have enable everywhere.
-
 #+BEGIN_SRC emacs-lisp 
 (use-package beacon
   :config
   (beacon-mode 1))
 #+END_SRC
-
 ** Helpful
 Let Emacs theach Emacs.
-
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :custom
@@ -274,14 +262,12 @@ Let Emacs theach Emacs.
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 #+END_SRC
-
 ** Vterm
 Eshell is good but sometimes I need something more... Touch, sweet touch
 You've given me too much to feel...
 Damn cmake and libvterm are not up to date on *Debian* based distro...
 I found a newer version of cmake, but I can't a newer version of find libvterm.
 Luckily in *Arch* they are up to date.
-
 #+BEGIN_SRC emacs-lisp
 (use-package vterm
   :init
@@ -292,129 +278,123 @@ Luckily in *Arch* they are up to date.
   ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
 #+END_SRC
+** MU4E
+Basic setup for mu4e
+1) load mu4e
+  #+begin_src emacs-lisp
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
+  #+end_src
+2) keybind and configuration
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-x e") 'mu4e)
 
-** Magit
-I need to re-read the documentation
-#+begin_src emacs-lisp
+     (setq mu4e-user-mail-address-list '("antofma97@gmail.com"))	
 
-#+end_src
-** Projectile
-#+begin_src emacs-lisp
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/uni/code")
-    (setq projectile-project-search-path '("~/uni/code")))
-  (setq projectile-switch-project-action #'projectile-dired))
+     ;; viewing options
+     (setq mu4e-view-show-addresses t)
+     ;; Do not leave message open after it has been sent
+     (setq message-kill-buffer-on-exit t)
+     ;; Don't ask for a 'context' upon opening mu4e
+     (setq mu4e-context-policy 'pick-first)
+     ;; Don't ask to quit
+     (setq mu4e-confirm-quit nil)
 
-(use-package counsel-projectile
-  :after projectile
-  :config (counsel-projectile-mode))
-#+end_src
-** Treemacs
-#+begin_src emacs-lisp
-(use-package treemacs
-  :defer t
-  :init
-  (with-eval-after-load 'winum
-    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-  :config
-  (progn
-    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-          treemacs-deferred-git-apply-delay      0.5
-          treemacs-directory-name-transformer    #'identity
-          treemacs-display-in-side-window        t
-          treemacs-eldoc-display                 t
-          treemacs-file-event-delay              5000
-          treemacs-file-extension-regex          treemacs-last-period-regex-value
-          treemacs-file-follow-delay             0.2
-          treemacs-file-name-transformer         #'identity
-          treemacs-follow-after-init             t
-          treemacs-git-command-pipe              ""
-          treemacs-goto-tag-strategy             'refetch-index
-          treemacs-indentation                   2
-          treemacs-indentation-string            " "
-          treemacs-is-never-other-window         nil
-          treemacs-max-git-entries               5000
-          treemacs-missing-project-action        'ask
-          treemacs-move-forward-on-expand        nil
-          treemacs-no-png-images                 nil
-          treemacs-no-delete-other-windows       t
-          treemacs-project-follow-cleanup        nil
-          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-          treemacs-position                      'left
-          treemacs-read-string-input             'from-child-frame
-          treemacs-recenter-distance             0.1
-          treemacs-recenter-after-file-follow    nil
-          treemacs-recenter-after-tag-follow     nil
-          treemacs-recenter-after-project-jump   'always
-          treemacs-recenter-after-project-expand 'on-distance
-          treemacs-show-cursor                   nil
-          treemacs-show-hidden-files             t
-          treemacs-silent-filewatch              nil
-          treemacs-silent-refresh                nil
-          treemacs-sorting                       'alphabetic-asc
-          treemacs-space-between-root-nodes      t
-          treemacs-tag-follow-cleanup            t
-          treemacs-tag-follow-delay              1.5
-          treemacs-user-mode-line-format         nil
-          treemacs-user-header-line-format       nil
-          treemacs-width                         35
-          treemacs-workspace-switch-cleanup      nil)
+     (setq mu4e-maildir-shortcuts
+      '(("GmailAccounts/INBOX" . ?g)))
 
-    ;; The default width and height of the icons is 22 pixels. If you are
-    ;; using a Hi-DPI display, uncomment this to double the icon size.
-    ;;(treemacs-resize-icons 44)
+     ;; attachments will be automaically placed on the specified folder
+     (setq mu4e-attachment-dir "~/Downloads/MailAttachments")
+     ;; modify behavior when putting something in the trash (T flag) so as
 
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode 'always)
-    (pcase (cons (not (null (executable-find "git")))
-                 (not (null treemacs-python-executable)))
-      (`(t . t)
-       (treemacs-git-mode 'deferred))
-      (`(t . _)
-       (treemacs-git-mode 'simple))))
-  :bind
-  (:map global-map
-        ("M-0"       . treemacs-select-window)
-        ("C-x t 1"   . treemacs-delete-other-windows)
-        ("C-x t t"   . treemacs)
-        ("C-x t B"   . treemacs-bookmark)
-        ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+     ;; to make it sync to the remote server. This code deals with the bug
+     ;; that, whenever a message is marked with the trash label T,
+     ;; offlineimap wont sync it back to the gmail servers.
+     ;;
+     ;; NOTE: Taken from
+     ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+     (defun remove-nth-element (nth list)
+       (if (zerop nth) (cdr list)
+         (let ((last (nthcdr (1- nth) list)))
+           (setcdr last (cddr last))
+           list)))
+     (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
+     (add-to-list 'mu4e-marks
+             '(trash
+               :char ("d" . "▼")
+               :prompt "dtrash"
+               :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+               :action (lambda (docid msg target)
+                         (mu4e~proc-move docid
+                                         (mu4e~mark-check-target target) "-N"))))
 
-(use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
+    ;; Context conf settings
 
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
 
-(use-package treemacs-icons-dired
-  :after (treemacs dired)
-  :ensure t
-  :config (treemacs-icons-dired-mode))
-#+end_src
+     (setq mu4e-contexts
+           `(
+        ,(make-mu4e-context
+          :name "Gmail Account"
+          :match-func (lambda (msg)
+                        (when msg
+                          (mu4e-message-contact-field-matches
+                           msg '(:from :to :cc :bcc) "antofma97@gmail.com")))
+
+          :vars '(
+                  (mu4e-trash-folder . "/GmailAccount/[Gmail].Trash")
+                  (mu4e-refile-folder . "/GmailAccount/[Gmail].Archive")
+                  (mu4e-drafts-folder . "/GmailAccount/[Gmail].Drafts")
+                  (mu4e-sent-folder . "/GmailAccount/[Gmail].Sent Mail")
+                  (user-mail-address  . "antofma97@gmail.com")
+                  (user-full-name . "Antonio Petrillo")
+                  (smtpmail-smtp-user . "antofma97")
+                  (smtpmail-local-domain . "gmail.com")
+                  (smtpmail-default-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-service . 587)
+                  ))
+        ))
+
+     ;; Set how email is to be sent
+     (setq send-mail-function (quote smtpmail-send-it))
+   #+end_src
+ 3) mu4e-alert
+    #+begin_src emacs-lisp
+;;       (require 'mu4e-alert)
+
+;;       (setq mu4e-alert-interesting-mail-query "flag:unread AND maildir:/GmailAccount/INBOX ")
+              
+
+;;       (mu4e-alert-enable-mode-line-display)
+
+;;       (defun refresh-mu4e-alert-mode-line ()
+;;         (interactive)
+;;         (mu4e~proc-kill)
+;;         (async-shell-command "email_sync.sh")
+;;         (mu4e-alert-enable-mode-line-display)
+;;         )
+;;
+;;       (run-with-timer 0 3600 'refresh-mu4e-alert-mode-line)
+;;
+;;      ;; do not pop into view buffer window associated with async shell commands
+;;      (add-to-list 'display-buffer-alist
+;;              (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
+
+    #+end_src
 * Org Mode
 ** Basic config
-
 #+BEGIN_SRC emacs-lisp 
-  (use-package org
-    :config
-    (setq org-ellipsis " ▾"))
+   (use-package org
+     :config
+     (setq org-ellipsis " ▾"))
 
-  (require 'org-tempo)
+   (setq org-todo-keywords
+       '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
+
+   (require 'org-tempo)
+
 #+END_SRC
-
 ** EVIL!
-
 #+BEGIN_SRC emacs-lisp 
 (use-package evil-org
   :after (evil org)
@@ -428,28 +408,21 @@ I need to re-read the documentation
 					additional
 					calendar)))))
 #+END_SRC
-
 ** Org agenda
 I need to learn more about *org agenda*, 
 for now this section contains just a keybindings.
-
 #+BEGIN_SRC emacs-lisp 
 (global-set-key (kbd "C-c a") 'org-agenda)
 #+END_SRC
-
 ** Other config
 The path need to be adapted to the correct file depending on the host machine.
-
 #+BEGIN_SRC emacs-lisp 
-  (setq org-log-mode t)
-  (setq org-agenda-files '("~/Documents/org/agenda/notes.org"
-                           "~/Documents/org/agenda/agenda.org"
-                           "~/Documents/org/agenda/uni.org"))
+(setq org-log-mode t)
+(setq org-agenda-files '("~/Documents/org/agenda/notes.org"
+			 "~/Documents/org/agenda/agenda.org"))
 #+END_SRC
-
 ** Aesthetic
 Probably in the near future I will switch to *org-superstar*
-
 #+BEGIN_SRC emacs-lisp 
 (use-package org-bullets
   :config
@@ -459,16 +432,15 @@ Probably in the near future I will switch to *org-superstar*
 (setq org-startup-indented t)
 (setq org-startup-with-inline-images t)
 #+END_SRC
-
 ** Code block config
-Now Org can use the language specified below, most important with this I can use a literato conifg now.
+Org can use the language specified below, most important with this I can use a literato conifg now.
 *** Language for code block
-
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
    (eshell     . t)
+   (lua        . t)
    (C          . t)
    (awk        . t)
    (sed        . t)
@@ -476,10 +448,10 @@ Now Org can use the language specified below, most important with this I can use
    (haskell    . t)
    (java       . t)
    (plantuml   . t)))
-   
-(setq org-confirm-babel-evaluate nil)
-#+END_SRC
 
+(setq org-confirm-babel-evaluate nil
+      org-src-preserve-indentation t)
+#+END_SRC
 ** Literate config
 *** Auto tangle configuration file
 I don't know why but don't work properly, needs some more work.
@@ -494,11 +466,9 @@ To call org-babel-tangle *C-c C-v t*
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'literate-config/tangle-config)))
 #+END_SRC
-
 * Ivy and Helm
 ** Ivy
 Basic config copied from *System Crafters*
-
 #+BEGIN_SRC emacs-lisp 
 (use-package ivy
   :diminish
@@ -531,10 +501,8 @@ Basic config copied from *System Crafters*
   :config
   (counsel-mode 1))
 #+END_SRC
-
 ** Helm
 Basic config copied from *Matheus Augusto da Silva*
-
 #+BEGIN_SRC emacs-lisp 
 (use-package helm)
 (require 'helm-config)
