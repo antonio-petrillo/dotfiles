@@ -22,7 +22,7 @@ Config { font = "xft:Fira Code Retina:pixelsize=12:antialias=true:hinting=true"
                     , Run Com "uname" ["-s", "-r"] "" 36000
                     , Run Date "<fn=2>\xf133 </fn> %d %b %Y (%H:%M)" "date" 60
                     , Run UnsafeStdinReader
-                    , Run Battery ["-t", "<acstatus>: <left>% - timeleft", "--", "-O", "AC", "-o", "Bat"
+                    , Run Battery ["-t", "<acstatus>: <left>% - ETA: <timeleft>", "--", "-O", "AC", "-o", "Bat"
                                   ,"-h", "green", "-l", "red"] 10
                     ]
        , sepChar = "%"

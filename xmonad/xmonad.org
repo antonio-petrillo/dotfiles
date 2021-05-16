@@ -191,10 +191,10 @@ main = do
     { handleEventHook = docksEventHook
     , logHook         = dynamicLogWithPP $ xmobarPP
                            { ppOutput          = \x -> hPutStrLn xmproc x
-                           , ppCurrent         = xmobarColor "#83a598" "" . wrap "[" "]"
-                           , ppVisible         = xmobarColor "#83a598" "" . clickable
-                           , ppHidden          = xmobarColor "#474646" "" . wrap "*" "" . clickable
-                           , ppHiddenNoWindows = xmobarColor "#83a598" "" . clickable
+                           , ppCurrent         = xmobarColor "#e69933" "" . wrap "[" "]"
+                           , ppVisible         = xmobarColor "#e69933" "" . clickable
+                           , ppHidden          = xmobarColor "#b17711" "" . wrap "*" "" . clickable
+                           , ppHiddenNoWindows = xmobarColor "#e69933" "" . clickable
                            , ppTitle           = xmobarColor "#CCCCCC" "" . shorten 60
                            , ppSep             = "<fc=#666666> <fn=2>|</fn> </fc>"
                            , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!" 
@@ -229,7 +229,7 @@ Config { font = "xft:Fira Code Retina:pixelsize=12:antialias=true:hinting=true"
                     , Run Com "uname" ["-s", "-r"] "" 36000
                     , Run Date "<fn=2>\xf133 </fn> %d %b %Y (%H:%M)" "date" 60
                     , Run UnsafeStdinReader
-                    , Run Battery ["-t", "<acstatus>: <left>% - timeleft", "--", "-O", "AC", "-o", "Bat"
+                    , Run Battery ["-t", "<acstatus>: <left>% - ETA: <timeleft>", "--", "-O", "AC", "-o", "Bat"
                                   ,"-h", "green", "-l", "red"] 10
                     ]
        , sepChar = "%"

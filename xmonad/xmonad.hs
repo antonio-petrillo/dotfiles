@@ -170,10 +170,10 @@ main = do
     { handleEventHook = docksEventHook
     , logHook         = dynamicLogWithPP $ xmobarPP
                            { ppOutput          = \x -> hPutStrLn xmproc x
-                           , ppCurrent         = xmobarColor "#83a598" "" . wrap "[" "]"
-                           , ppVisible         = xmobarColor "#83a598" "" . clickable
-                           , ppHidden          = xmobarColor "#474646" "" . wrap "*" "" . clickable
-                           , ppHiddenNoWindows = xmobarColor "#83a598" "" . clickable
+                           , ppCurrent         = xmobarColor "#e69933" "" . wrap "[" "]"
+                           , ppVisible         = xmobarColor "#e69933" "" . clickable
+                           , ppHidden          = xmobarColor "#b17711" "" . wrap "*" "" . clickable
+                           , ppHiddenNoWindows = xmobarColor "#e69933" "" . clickable
                            , ppTitle           = xmobarColor "#CCCCCC" "" . shorten 60
                            , ppSep             = "<fc=#666666> <fn=2>|</fn> </fc>"
                            , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!" 
