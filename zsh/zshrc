@@ -2,8 +2,8 @@ source $ZDOTDIR/aliases
 
 autoload -U colors && colors
 
-PROMPT="%F{207}%n%f%F{blue}@%f%F{magenta}%m%f%F{cyan}%~%f%b "
-RPROMPT="%F{blue}%t%f"
+PROMPT="%F{#ebcb8b}%n%f%F{#bf616a}@%f%F{#ebcb8b}%m%f%F{#a3be8c}%~%f%b "
+RPROMPT="%F{#dedee9}%t%f"
 
 setopt autocd
 stty stop undef

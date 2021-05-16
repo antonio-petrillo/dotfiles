@@ -46,10 +46,10 @@ myModMask       = mod4Mask
 myWorkspaces    = map show [1..9]
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..]
 
-myNormalBorderColor  = "#6633f6"
-myFocusedBorderColor = "#cc0dff"
+myNormalBorderColor  = "#474646"
+myFocusedBorderColor = "#83a598"
 
-myFont = "ttf: Fira Code,Fira Code Retina:style=Retina,Regular"
+myFont = "xft:Fira Code:style=Retina,Regular"
 
 myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
     [((m .|. modKey, k), windows $ f i)
@@ -88,16 +88,19 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("C-e C-j"     , spawn (emacsExec ++ "'(dired nil)'" ))
                    , ("C-e C-x"     , spawn (emacsExec ++ "'(dired \"~/.xmonad\")'"))  -- open xmonad folder
                    , ("C-e C-e"     , spawn (emacsExec ++ "'(dired \"~/.emacs.d\")'")) -- open emacs folder
+                   , ("C-e C-a"     , spawn (emacsExec ++ "'(dired \"~/.config/awesome\")'")) -- open emacs folder
                    , ("C-e C-c"     , spawn (emacsExec ++ "'(dired \"~/.config\")'"))  -- open config folder
                    , ("C-e e"       , spawn (emacsExec ++ "'(eshell)'"))
                    , ("C-e t"       , spawn (emacsExec ++ "'(vterm)'"))
                    , ("C-e d"       , spawn (emacsExec ++ "'(dashboard-refresh-buffer)'"))
 
-                   -- Terminal app
+                   -- Keybinds to launch app
                    , ("M-a h"       , spawn (myTerminal ++ " -e htop"))
                    , ("M-a f"       , spawn (myTerminal ++ " -e ranger"))
                    , ("M-a u"       , spawn (myTerminal ++ " -e sudo pacman -Syyu"))
                    , ("M-a e"       , spawn (myTerminal ++ " -e nvim"))
+                   , ("M-a t"       , spawn ("telegram-desktop"))
+                   , ("M-a S-t"     , spawn ("teams"))
                    ]
 
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
@@ -130,7 +133,7 @@ myLogHook = return ()
 
 myStartupHook = do
     spawnOnce "picom --experimental-backend &"
-    spawnOnce "feh --bg-scale ~/Pictures/wallpaper/haskell3.jpg &"
+    spawnOnce "feh --bg-scale ~/Pictures/wallpaper/gruvbox_dark_arch.png &"
     spawnOnce "lxsession &"
     spawnOnce "udiskie &"
     spawnOnce "xmobar ~/.xmonad/xmobarrc"
@@ -167,10 +170,10 @@ main = do
     { handleEventHook = docksEventHook
     , logHook         = dynamicLogWithPP $ xmobarPP
                            { ppOutput          = \x -> hPutStrLn xmproc x
-                           , ppCurrent         = xmobarColor "#992299" "" . wrap "[" "]"
-                           , ppVisible         = xmobarColor "#992299" "" . clickable
-                           , ppHidden          = xmobarColor "#905aed" "" . wrap "*" "" . clickable
-                           , ppHiddenNoWindows = xmobarColor "#662266" "" . clickable
+                           , ppCurrent         = xmobarColor "#83a598" "" . wrap "[" "]"
+                           , ppVisible         = xmobarColor "#83a598" "" . clickable
+                           , ppHidden          = xmobarColor "#474646" "" . wrap "*" "" . clickable
+                           , ppHiddenNoWindows = xmobarColor "#83a598" "" . clickable
                            , ppTitle           = xmobarColor "#CCCCCC" "" . shorten 60
                            , ppSep             = "<fc=#666666> <fn=2>|</fn> </fc>"
                            , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!" 
