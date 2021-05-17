@@ -80,7 +80,8 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-,"         , sendMessage (IncMasterN 1))
                    , ("M-."         , sendMessage (IncMasterN (-1)))
                    -- , ("M-f"         , sendMessage $ Toggle FULL)
-                   , ("M-S-x"       , io (exitWith ExitSuccess))
+                   -- , ("M-S-x"       , io (exitWith ExitSuccess))
+                   , ("M-S-x"       , spawn $ "arcolinux-logout")
                    , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
                    , ("M-<Esc>"     , spawn $ "xkill")
 
@@ -125,9 +126,10 @@ myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
 fibonacci = spacing myGaps $ smartBorders $ spiral (6/7)
 
 myManageHook = composeAll
-    [ className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore]
+    [ className =? "MPlayer"          --> doFloat
+    , className =? "Gimp"             --> doFloat
+    , resource  =? "desktop_window"   --> doIgnore ]
+    --, className =? "Arcolinux Logout" --> doFull]
 
 myLogHook = return ()
 
@@ -138,7 +140,7 @@ myStartupHook = do
     spawnOnce "udiskie &"
     spawnOnce "xmobar ~/.xmonad/xmobarrc"
     spawnOnce "xsetroot -cursor_name left_ptr &"
-    spawnOnce "xsetroot -solid '#664466'"
+    spawnOnce "xsetroot -solid '#e69933'"
 
 myConfig = defaultConfig {
         terminal           = myTerminal,
@@ -173,9 +175,9 @@ main = do
                            , ppCurrent         = xmobarColor "#e69933" "" . wrap "[" "]"
                            , ppVisible         = xmobarColor "#e69933" "" . clickable
                            , ppHidden          = xmobarColor "#b17711" "" . wrap "*" "" . clickable
-                           , ppHiddenNoWindows = xmobarColor "#e69933" "" . clickable
+                           , ppHiddenNoWindows = xmobarColor "#b69933" "" . clickable
                            , ppTitle           = xmobarColor "#CCCCCC" "" . shorten 60
-                           , ppSep             = "<fc=#666666> <fn=2>|</fn> </fc>"
+                           , ppSep             = "<fc=#e69933> <fn=2>|</fn> </fc>"
                            , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!" 
                            , ppExtras          = [windowCount]
                            , ppOrder           = \(ws:l:t:ex) -> [ws,l] ++ ex ++ [t]
