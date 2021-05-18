@@ -14,14 +14,17 @@
   + evil and other stuff
   + logo folder for the dashboard
   + literal config
++ Awesome config with
+  + lua battery widget
 + Vim
-+ tmux (I use it when I can't use HLWM, i.e. on my laptop with ElementaryOS)
++ tmux (need some tweaks)
 + wallpaper collection
 + Alacritty
     
 * What I want to add, or redo in a better way
-+ An Xmonad config, possibly literal
 + A better Vim config
-+ Extend my Emacs config
++ Extend emacs/awesome/xmonad config
++ DWM config
 + A folder with all my scripts
-+ A NixOS config if I take the courage to switch
++ A NixOS config if I take the courage to take the leap
++ Add a literate config for aweome wm
