@@ -21,7 +21,8 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spiral
-import XMonad.Layout.ToggleLayouts
+import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle.Instances
 
 import Data.Maybe (isJust, fromJust)
 
@@ -79,7 +80,7 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-t"         , withFocused $ windows . W.sink)
                    , ("M-,"         , sendMessage (IncMasterN 1))
                    , ("M-."         , sendMessage (IncMasterN (-1)))
-                   -- , ("M-f"         , sendMessage $ Toggle FULL)
+                   , ("M-f"         , sendMessage $ Toggle FULL)
                    -- , ("M-S-x"       , io (exitWith ExitSuccess))
                    , ("M-S-x"       , spawn $ "arcolinux-logout")
                    , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
@@ -102,6 +103,10 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-a e"       , spawn (myTerminal ++ " -e nvim"))
                    , ("M-a t"       , spawn ("telegram-desktop"))
                    , ("M-a S-t"     , spawn ("teams"))
+
+                   -- toggle between dark/light mode 
+                   , ("M-s S-d"     , spawn ("feh --bg-scale ~/Pictures/wallpaper/gruvbox_dark_arch.png"))
+                   , ("M-s S-l"     , spawn ("feh --bg-scale ~/Pictures/wallpaper/gruvbox_light_arch.png"))
                    ]
 
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
@@ -110,11 +115,12 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
     ]
 
-myLayout = avoidStruts $ mouseResize  myDefaultLayout
+myLayout = avoidStruts $ mkToggle (NOBORDERS ?? FULL ?? EOT) $ mouseResize  myDefaultLayout
   where
     myDefaultLayout = myTiledLayout
                       ||| Mirror myTiledLayout
                       ||| fibonacci
+                      ||| myTabbedLayout
                       ||| noBorders Full 
 
 myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
@@ -129,7 +135,17 @@ myManageHook = composeAll
     [ className =? "MPlayer"          --> doFloat
     , className =? "Gimp"             --> doFloat
     , resource  =? "desktop_window"   --> doIgnore ]
-    --, className =? "Arcolinux Logout" --> doFull]
+
+myTabbedLayout = tabbed shrinkText myTabTheme
+
+myTabTheme = def { fontName            = myFont
+                 , activeColor         = "#83a598"
+                 , inactiveColor       = "#474646"
+                 , activeBorderColor   = "#83a598"
+                 , inactiveBorderColor = "#474646"
+                 , activeTextColor     = "#474646"
+                 , inactiveTextColor   = "#83a598"
+                 }
 
 myLogHook = return ()
 

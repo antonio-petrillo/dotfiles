@@ -2,6 +2,7 @@
 #+AUTHOR: Antonio Petrillo
 
 * Import
+These are all the library that I need for my XMonad configuration.
 #+begin_src haskell :tangle xmonad.hs
 import XMonad
 import System.IO
@@ -26,11 +27,15 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.Spiral
-import XMonad.Layout.ToggleLayouts
+import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle.Instances
 
 import Data.Maybe (isJust, fromJust)
 #+end_src
 * My default program
+I have defined a variable for all my favorite application for two reason:
+  1. I can use the variable name in the config (*I can also set some parameter for terminal app*)
+  2. I can easily change if I discover a better substitute
 #+begin_src haskell :tangle xmonad.hs
 myTerminal         = "alacritty"
 myFallbackTerminal = "cool-retro-term"
@@ -43,6 +48,7 @@ emacs              = "emacs"
 emacsExec          = emacs ++ " --eval "
 #+end_src
 * My window manager parameter
+Parameter to use all along the config.
 #+begin_src haskell :tangle xmonad.hs
 myBorderWidth   = 2
 myGaps          = 2
@@ -61,6 +67,9 @@ myFocusedBorderColor = "#83a598"
 myFont = "xft:Fira Code:style=Retina,Regular"
 #+end_src
 * My keybinding
+The most important section, I used the /classic scheme/ for the workspace workflow, and EZ way for all the others.
+I didn't know how to set the bindings for the workspace handling in the EZ way...
+I prefer the EZ way, even if it's harder to find error in it, because is more readable and more easy to write and remember the Emacs keybinding.
 #+begin_src haskell :tangle xmonad.hs
 myKeys conf@(XConfig {XMonad.modMask = modKey}) = M.fromList $
     [((m .|. modKey, k), windows $ f i)
@@ -90,7 +99,7 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-t"         , withFocused $ windows . W.sink)
                    , ("M-,"         , sendMessage (IncMasterN 1))
                    , ("M-."         , sendMessage (IncMasterN (-1)))
-                   -- , ("M-f"         , sendMessage $ Toggle FULL)
+                   , ("M-f"         , sendMessage $ Toggle FULL)
                    -- , ("M-S-x"       , io (exitWith ExitSuccess))
                    , ("M-S-x"       , spawn $ "arcolinux-logout")
                    , ("M-x"         , spawn $ "xmonad --recompile && xmonad --restart")
@@ -113,6 +122,10 @@ myAdditionalKeys = [ -- Basic keybindings
                    , ("M-a e"       , spawn (myTerminal ++ " -e nvim"))
                    , ("M-a t"       , spawn ("telegram-desktop"))
                    , ("M-a S-t"     , spawn ("teams"))
+
+                   -- toggle between dark/light mode 
+                   , ("M-s S-d"     , spawn ("feh --bg-scale ~/Pictures/wallpaper/gruvbox_dark_arch.png"))
+                   , ("M-s S-l"     , spawn ("feh --bg-scale ~/Pictures/wallpaper/gruvbox_light_arch.png"))
                    ]
 
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
@@ -122,12 +135,19 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     ]
 #+end_src
 * My Layout
+The second most important section, all the possible layout are:
++ Master & Stack, with Master on the left
++ Master & Stack, with Master on top
++ Spiral, like bspwm, I call it Fibonacci Layout
++ Tabbed, like one of the default layout in I3
++ FullScreen, I don't realy use it, but sometime it can be useful [fn:1]
 #+begin_src haskell :tangle xmonad.hs
-myLayout = avoidStruts $ mouseResize  myDefaultLayout
+myLayout = avoidStruts $ mkToggle (NOBORDERS ?? FULL ?? EOT) $ mouseResize  myDefaultLayout
   where
     myDefaultLayout = myTiledLayout
                       ||| Mirror myTiledLayout
                       ||| fibonacci
+                      ||| myTabbedLayout
                       ||| noBorders Full 
 
 myTiledLayout = spacing myGaps (Tall nmaster delta ratio)
@@ -142,9 +162,22 @@ myManageHook = composeAll
     [ className =? "MPlayer"          --> doFloat
     , className =? "Gimp"             --> doFloat
     , resource  =? "desktop_window"   --> doIgnore ]
-    --, className =? "Arcolinux Logout" --> doFull] 
+
+myTabbedLayout = tabbed shrinkText myTabTheme
+
+myTabTheme = def { fontName            = myFont
+                 , activeColor         = "#83a598"
+                 , inactiveColor       = "#474646"
+                 , activeBorderColor   = "#83a598"
+                 , inactiveBorderColor = "#474646"
+                 , activeTextColor     = "#474646"
+                 , inactiveTextColor   = "#83a598"
+                 }
+
 #+end_src
+[fn:1] I can toggle to ~Full~ layout with ~M-f~
 * My hook
+Just the autostart section, I have to learn a little bit more about LogHook
 #+begin_src haskell :tangle xmonad.hs
 myLogHook = return ()
 
@@ -158,6 +191,7 @@ myStartupHook = do
     spawnOnce "xsetroot -solid '#e69933'"
 #+end_src
 * My config
+Applying all the definition above
 #+begin_src haskell :tangle xmonad.hs
 myConfig = defaultConfig {
         terminal           = myTerminal,
@@ -178,6 +212,7 @@ myConfig = defaultConfig {
     }
 #+end_src
 * Utility
+Adding clickable workspace in XMobar
 #+begin_src haskell :tangle xmonad.hs
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
     where i = fromJust $ M.lookup ws myWorkspaceIndices
@@ -186,6 +221,7 @@ windowCount :: X (Maybe String)
 windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
 #+end_src
 * Main function
+Starting point of XMonad and XMobar integration
 #+begin_src haskell :tangle xmonad.hs
 main = do
   xmproc <- spawnPipe "xmobar  ~/.xmonad/xmobarrc"
@@ -205,7 +241,8 @@ main = do
                            }
     } `additionalKeysP` myAdditionalKeys
 #+end_src
-* Xmobar
+* XMobar
+Config for XMobar, at a first glance it seems complicated, but after a little bit I found easy to configure XMobar than polybar
 #+begin_src haskell :tangle xmobarrc
 Config { font = "xft:Fira Code Retina:pixelsize=12:antialias=true:hinting=true"
        , additionalFonts = [ "xft:FontAwesome:pixelsize=9"
@@ -239,15 +276,15 @@ Config { font = "xft:Fira Code Retina:pixelsize=12:antialias=true:hinting=true"
        , template = " <icon=haskell_20.xpm/> <fc=#e69933>|</fc> %UnsafeStdinReader% }{ <fc=#83a598><fn=2> </fn></fc><action=`alacritty -e sudo pacman -Syyu`>%uname%</action> <fc=#e69933>|</fc> <action=`alacritty -e htop`>%cpu%</action> <fc=#e69933>|</fc> <action=`alacritty -e htop`>%memory%</action> <fc=#e69933>|</fc> <action=`alacritty -e nmtui`>%wlp4s0%</action> <fc=#e69933>|</fc> %battery% <fc=#e69933>|</fc> %date%"
        }
 #+end_src
-* TODO [0/1]
+* TODO 
 + [ ] Add more documetation to the configuration
-+ [0/2] Obviously extend this configuration
-  + [ ] Add a tabbed layout
++ [1/2] Obviously extend this configuration
+  + [X] Add a tabbed layout
   + [ ] Add sublayout configuration
-+ [4/6] Better support for xmobar
++ [6/6] Better support for xmobar
   + [X] Launch xmobar
   + [X] Add mouse action
   + [X] Add Theme
   + [X] Don't let window cover the bar
-  + [ ] Choice a better colorscheme
-  + [ ] add more 'stuff'
+  + [X] Choice a better colorscheme
+  + [X] add more 'stuff'

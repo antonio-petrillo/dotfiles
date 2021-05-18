@@ -13,55 +13,68 @@
 ;; ensure all the package included with use-package
 (setq use-package-always-ensure t)
 
-  ;; hide scroll bar, menu bar, tool bar
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
+;; hide scroll bar, menu bar, tool bar
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 
-  ;; remove initial buffer
-  (setq inhibit-startup-message t)
+;; remove initial buffer
+(setq inhibit-startup-message t)
 
-  ;; enable line numbers
-  (column-number-mode t)
-  (global-display-line-numbers-mode t)
-  (setq display-line-numbers-type 'relative)
+;; enable line numbers
+(column-number-mode t)
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'relative)
 
-  ;; don't use line numbers in certain mode
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-		      vterm-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;; don't use line numbers in certain mode
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+	      vterm-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-  ;; don't create lockfile, I know what file I'm gonna edit
-  (setq create-lockfiles nil)
+(use-package heaven-and-hell
+  :ensure t
+  :init
+  (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
+  (setq heaven-and-hell-themes
+        '((light . doom-gruvbox-light)
+          (dark . doom-gruvbox))) ;; Themes can be the list: (dark . (tsdh-dark wombat))
+  ;; Optionall, load themes without asking for confirmation.
+  (setq heaven-and-hell-load-theme-no-confirm t)
+  :hook (after-init . heaven-and-hell-init-hook)
+  :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
+         ("<f6>" . heaven-and-hell-toggle-theme)))
 
-  ;; don't make backup files
-  ;; (setq make-backup-files nil)
+;; don't create lockfile, I know what file I'm gonna edit
+(setq create-lockfiles nil)
 
-  ;; change bakcup directory
-  (setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
+;; don't make backup files
+(setq make-backup-files nil)
 
-  ;; username and email
-  (setq user-full-name "Antonio Petrillo"
-        user-mail-address "antonio.petrillo4@studenti.unina.it")
+;; change bakcup directory
+;; (setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
 
-  ;; type yes or no require to much effort
-  (fset 'yes-or-no-p 'y-or-n-p)
+;; username and email
+(setq user-full-name "Antonio Petrillo"
+      user-mail-address "antonio.petrillo4@studenti.unina.it")
 
-  ;; use fira code fonts
-  (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
+;; type yes or no require to much effort
+(fset 'yes-or-no-p 'y-or-n-p)
 
-  ;; scroll one line at a time (less "jumpy" than defaults)
-    
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+;; use fira code fonts
+(set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
+
+;; scroll one line at a time (less "jumpy" than defaults)
   
-  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-    
-  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-    
-  (setq scroll-step 1) ;; keyboard scroll one line at a time
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  
+(setq scroll-step 1) ;; keyboard scroll one line at a time
 
 (use-package evil
   :init
@@ -126,7 +139,7 @@
     :init
     (progn
       (setq dashboard-items '((recents   . 5)
-                              (bookmarks . 5)))
+                              (bookmarks . 10)))
       (setq dashboard-show-shortcuts nil)
       (setq dashboard-center-content nil)
       (setq dashboard-banner-logo-title "EMACS")
@@ -137,35 +150,35 @@
     :config
     (dashboard-setup-startup-hook))
 
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-single-up-directory
-      "l" 'dired-single-buffer))
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
 
-  (use-package dired-single)
+(use-package dired-single)
 
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
 
-  (use-package dired-open
-    :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-    (setq dired-open-extensions '(("png" . "feh")
-				      ("pdf" . "zathura")
-                                  ("jpg" . "feh")
-                                  ("mkv" . "mpv"))))
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+			      ("pdf" . "zathura")
+                                ("jpg" . "feh")
+                                ("mkv" . "mpv"))))
 
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 
 (use-package which-key
   :init (which-key-mode 1)
@@ -420,3 +433,18 @@
 
 ;; show kill ring, pick something to paste
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(doom-gruvbox))
+ '(helm-minibuffer-history-key "M-p")
+ '(package-selected-packages
+   '(heaven-and-hell which-key vterm use-package restart-emacs rainbow-mode rainbow-delimiters ox-hugo org-bullets mu4e-alert magit lua-mode ivy-rich helpful helm haskell-mode evil-org evil-collection doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles dashboard counsel beacon all-the-icons-dired)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

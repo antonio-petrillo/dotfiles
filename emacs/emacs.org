@@ -29,57 +29,70 @@ Enabling the repository to extends Emacs.
 ** UI & UX basic configuration
 More advanced UI configuration are in the *Theming* section.
 #+BEGIN_SRC emacs-lisp
-  ;; hide scroll bar, menu bar, tool bar
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
+;; hide scroll bar, menu bar, tool bar
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 
-  ;; remove initial buffer
-  (setq inhibit-startup-message t)
+;; remove initial buffer
+(setq inhibit-startup-message t)
 
-  ;; enable line numbers
-  (column-number-mode t)
-  (global-display-line-numbers-mode t)
-  (setq display-line-numbers-type 'relative)
+;; enable line numbers
+(column-number-mode t)
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'relative)
 
-  ;; don't use line numbers in certain mode
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-		      vterm-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;; don't use line numbers in certain mode
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+	      vterm-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(use-package heaven-and-hell
+  :ensure t
+  :init
+  (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
+  (setq heaven-and-hell-themes
+        '((light . doom-gruvbox-light)
+          (dark . doom-gruvbox))) ;; Themes can be the list: (dark . (tsdh-dark wombat))
+  ;; Optionall, load themes without asking for confirmation.
+  (setq heaven-and-hell-load-theme-no-confirm t)
+  :hook (after-init . heaven-and-hell-init-hook)
+  :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
+         ("<f6>" . heaven-and-hell-toggle-theme)))
 #+END_SRC
 ** System config
 #+BEGIN_SRC emacs-lisp
-  ;; don't create lockfile, I know what file I'm gonna edit
-  (setq create-lockfiles nil)
+;; don't create lockfile, I know what file I'm gonna edit
+(setq create-lockfiles nil)
 
-  ;; don't make backup files
-  ;; (setq make-backup-files nil)
+;; don't make backup files
+(setq make-backup-files nil)
 
-  ;; change bakcup directory
-  (setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
+;; change bakcup directory
+;; (setq backup-directory-alist '(("." . "~/.emacs.d/.backup")))
 
-  ;; username and email
-  (setq user-full-name "Antonio Petrillo"
-        user-mail-address "antonio.petrillo4@studenti.unina.it")
+;; username and email
+(setq user-full-name "Antonio Petrillo"
+      user-mail-address "antonio.petrillo4@studenti.unina.it")
 
-  ;; type yes or no require to much effort
-  (fset 'yes-or-no-p 'y-or-n-p)
+;; type yes or no require to much effort
+(fset 'yes-or-no-p 'y-or-n-p)
 
-  ;; use fira code fonts
-  (set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
+;; use fira code fonts
+(set-face-attribute 'default nil :font "Fira Code Retina" :height 140)
 
-  ;; scroll one line at a time (less "jumpy" than defaults)
-    
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+;; scroll one line at a time (less "jumpy" than defaults)
   
-  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-    
-  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-    
-  (setq scroll-step 1) ;; keyboard scroll one line at a time
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  
+(setq scroll-step 1) ;; keyboard scroll one line at a time
 #+END_SRC
 * Let's go Evil
 I have tried the default emacs keybinding and they are not that bad, but by now I am too used to the vim keybinding
@@ -170,7 +183,7 @@ A fancy splash screen for Emacs.
     :init
     (progn
       (setq dashboard-items '((recents   . 5)
-                              (bookmarks . 5)))
+                              (bookmarks . 10)))
       (setq dashboard-show-shortcuts nil)
       (setq dashboard-center-content nil)
       (setq dashboard-banner-logo-title "EMACS")
@@ -186,35 +199,35 @@ A fancy splash screen for Emacs.
 Dired stand for *Directory Editor*, a fully featured file manager inside Emacs!
 Here there are some tweak to enhance *Dired*.
 #+BEGIN_SRC emacs-lisp
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-single-up-directory
-      "l" 'dired-single-buffer))
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
 
-  (use-package dired-single)
+(use-package dired-single)
 
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
 
-  (use-package dired-open
-    :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-    (setq dired-open-extensions '(("png" . "feh")
-				      ("pdf" . "zathura")
-                                  ("jpg" . "feh")
-                                  ("mkv" . "mpv"))))
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+			      ("pdf" . "zathura")
+                                ("jpg" . "feh")
+                                ("mkv" . "mpv"))))
 
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 #+END_SRC
 * Other useful packages
 ** WhichKey
