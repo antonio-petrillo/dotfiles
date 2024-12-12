@@ -1,0 +1,208 @@
+@import "mocha.css";
+
+* {
+    font-family: 'JetBrains Mono', 'Font Awesome 6 Free', 'Font Awesome 6 Brands', monospace;
+    font-size: 10px;
+    color: @text;
+}
+
+window#waybar {
+    background-color: shade(@base, 0.9);
+    border: 2px solid alpha(@crust, 0.3);
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+button {
+    /* Use box-shadow instead of border so the text isn't offset */
+    box-shadow: inset 0 -3px transparent;
+    /* Avoid rounded borders under each button name */
+    border: none;
+    border-radius: 0;
+}
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+button:hover {
+    background: inherit;
+    box-shadow: inset 0 -3px @blue;
+}
+
+/* you can set a style on hover for any module like this */
+#pulseaudio:hover {
+    /* background-color: #a37800; */
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: @sky;
+}
+
+#workspaces button:hover {
+    background: @mantle;
+}
+
+#workspaces button.focused {
+    background-color: @surface0;
+    box-shadow: inset 0 -3px @subtext0;
+}
+
+#workspaces button.urgent {
+    background-color: @red;
+}
+
+#mode {
+    background-color: @surface1;
+    box-shadow: inset 0 -3px @subtext0;
+}
+
+#clock,
+#battery,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#power-profiles-daemon {
+    padding: 0 2px;
+    color: @text;
+}
+
+#window,
+#workspaces {
+    margin: 0 3px;
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+}
+
+#clock {
+    color: @text
+}
+
+#battery {
+    color: @text
+}
+
+#battery.charging, #battery.plugged {
+    color: @text
+}
+
+@keyframes blink {
+    to {
+        background-color: @surface0;
+        color: @text
+    }
+}
+
+/* Using steps() instead of linear as a timing function to limit cpu usage */
+#battery.critical:not(.charging) {
+    background-color: @base;
+    color: @red;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#power-profiles-daemon {
+    padding-right: 4px;
+}
+
+#power-profiles-daemon.performance {
+    color: @red
+}
+
+#power-profiles-daemon.balanced {
+    color: @blue;
+}
+
+#power-profiles-daemon.power-saver {
+    color: @green;
+}
+
+label:focus {
+    background-color: @base;
+}
+
+#backlight {
+}
+
+#network {
+}
+
+#network.disconnected {
+}
+
+#pulseaudio {
+}
+
+#pulseaudio.muted {
+    color: @pink;
+}
+
+#wireplumber {
+    color: #000000;
+}
+
+#wireplumber.muted {
+    background-color: #f53c3c;
+}
+
+#tray {
+    /* background-color: #2980b9; */
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @red;
+}
+
+#idle_inhibitor {
+}
+
+#idle_inhibitor.activated {
+    color: @blue;
+}
+
+#language {
+    color: @text;
+    padding: 0 1px;
+    margin: 0 1px;
+    min-width: 10px;
+}
+
+#keyboard-state > label {
+    padding: 0 5px;
+}
+
+#scratchpad {
+    background: @crust;
+}
+
+#scratchpad.empty {
+	background-color: transparent;
+}
+
+#privacy {
+    padding: 0;
+}
