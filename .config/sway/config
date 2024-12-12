@@ -74,6 +74,11 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
 
+bindgesture swipe:right workspace next
+bindgesture swipe:left workspace prev
+bindgesture swipe:up fullscreen
+bindgesture swipe:down floating toggle
+
 bindsym $mod+b splith
 bindsym $mod+v splitv
 
