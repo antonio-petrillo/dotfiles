@@ -177,7 +177,10 @@ exec_always {
 }
 
 for_window [app_id="firefox"] border pixel 2px
+for_window [app_id="telegram"] border none
+for_window [class="steam"] border none
 
+assign [class="steam"] workspace 4
 assign [app_id="firefox"] workspace 2
 assign [app_id="emacs"] workspace 1
 assign [app_id="foot"] workspace 1
