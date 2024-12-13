@@ -8,8 +8,6 @@ client.urgent            $peach    $base $peach $overlay0  $peach
 client.placeholder       $overlay0 $base $text  $overlay0  $overlay0
 client.background        $base
 
-for_window [app_id="firefox"] border none
-
 gaps inner 10
 gaps outer 5
 smart_gaps on
@@ -21,14 +19,15 @@ set $down j
 set $up k
 set $right l
 
-set $term foot
+set $term footclient
 set $file-manager nautilus
 
 set $menu dmenu_path | wmenu -i -f "JetBrains Mono 10" -p "Run: " -N 1e1e2e -n cdd6f4 -S 89dceb -s 1e1e2e -M cdd6f4 -m 1e1e2e  | xargs swaymsg exec --
-set $menu-alt wofi --show drun
+set $menu-alt wofi --conf ~/.config/wofi/config --style ~/.config/wofi/themes/catppuccin-mocha.css
 
 output * bg ~/.config/sway/wallpapers/abstract-swirls.jpg fill
 
+bindsym $mod+e exec emacsclient -c
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $file-manager
 bindsym $mod+Shift+q kill
@@ -82,9 +81,9 @@ bindgesture swipe:down floating toggle
 bindsym $mod+b splith
 bindsym $mod+v splitv
 
-bindsym $mod+p layout stacking
+bindsym $mod+q layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+s layout toggle split
 
 bindsym $mod+f fullscreen
 
@@ -177,6 +176,19 @@ exec_always {
   gsettings set $gnome-schema cursor-theme Adwaita
 }
 
+for_window [app_id="firefox"] border pixel 2px
+
+assign [app_id="firefox"] workspace 2
+assign [app_id="emacs"] workspace 1
+assign [app_id="foot"] workspace 1
+assign [app_id="footclient"] workspace 1
+
+assign [app_id="telegram"] workspace 3
+
 exec --no-startup-id gnome-keyring-daemon --start --components=pkcs11,secrets,ssh
 
 include /etc/sway/config.d/*
+exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+exec --no-startup-id emacs --daemon
+exec --no-startup-id mako
+exec --no-startup-id foot --server
