@@ -13,6 +13,7 @@ gaps outer 5
 smart_gaps on
 
 set $mod Mod4
+set $alt Mod1
 
 set $left h
 set $down j
@@ -50,6 +51,12 @@ bindsym $mod+Shift+$right move right
 
 bindsym $mod+comma workspace prev
 bindsym $mod+period workspace next
+
+bindsym $mod+tab workspace next_on_output
+bindsym $mod+Shift+tab workspace prev_on_output
+
+bindsym $alt+tab focus next
+bindsym $alt+Shift+tab focus prev
 
 bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
