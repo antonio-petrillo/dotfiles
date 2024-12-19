@@ -10,7 +10,7 @@ client.background        $base
 
 gaps inner 10
 gaps outer 5
-smart_gaps on
+# smart_gaps on
 
 set $mod Mod4
 set $alt Mod1
@@ -54,6 +54,16 @@ bindsym $mod+period workspace next
 
 bindsym $mod+tab workspace next_on_output
 bindsym $mod+Shift+tab workspace prev_on_output
+
+bindsym $mod+Ctrl+h move workspace to output left
+bindsym $mod+Ctrl+j move workspace to output down
+bindsym $mod+Ctrl+k move workspace to output up
+bindsym $mod+Ctrl+l move workspace to output right
+
+bindsym $mod+Ctrl+Shift+h focus output left
+bindsym $mod+Ctrl+Shift+j focus output down
+bindsym $mod+Ctrl+Shift+k focus output up
+bindsym $mod+Ctrl+Shift+l focus output right
 
 bindsym $alt+tab focus next
 bindsym $alt+Shift+tab focus prev
