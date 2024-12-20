@@ -1,0 +1,16 @@
+#+title: Instruction for future Me
+
+* Install
+| Prog     | Deps                             | Note                             |
+|----------+----------------------------------+----------------------------------|
+| sway     | ∅                                |                                  |
+| swaybg   | ∅                                |                                  |
+| swayidle | ∅                                |                                  |
+| swaylock | ∅                                |                                  |
+| waybar   | jetbrains fonts + font-awesome-6 |                                  |
+| wofi     | ∅                                |                                  |
+| foot     | ∅                                |                                  |
+| tmux     | ∅                                |                                  |
+| emacs    | v >= 28.0                        | Doom config is in another repo   |
+| kanata   | rust                             | Keyboard remapper for laptop kbd |
+| mako     | ∅                                |                                  |
